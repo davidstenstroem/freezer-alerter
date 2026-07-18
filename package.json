@@ -9,7 +9,7 @@
     "clean": "git clean -xdf dist node_modules",
     "dev": "pnpm env:run tsx watch src/main.ts",
     "env:run": "dotenv --",
-    "format": "prettier -w . --ignore-path .gitignore",
+    "format": "prettier -w . --ignore-path .gitignore --ignore-path .prettierignore",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "start": "pnpm env:run node dist/main.mjs",
