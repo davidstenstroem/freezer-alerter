@@ -1,0 +1,14 @@
+output:
+  - success
+  - failure
+
+pre-commit:
+  parallel: true
+  commands:
+    typecheck:
+      glob: '**/*.ts'
+      run: pnpm typecheck
+    lint:
+      glob: '**/*.{js,ts}'
+      run: pnpm exec eslint --fix {staged_files}
+      stage_fixed: true
