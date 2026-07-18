@@ -93,17 +93,36 @@ describe('createFreezerAlerter', () => {
       expect(sendMock).toHaveBeenCalledTimes(1);
     });
 
-    // Documents a known gap: evaluation is reading-driven. If the freezer
-    // warms up and then holds a constant temperature, the API pushes no new
-    // events, so the grace period elapses without anything re-evaluating and
-    // the warning never fires. Fix: re-run the alerter on a timer with the
-    // last reading, then enable this test.
-    it.skip('warns even when no new reading arrives after the grace period', () => {
+    it('warns even when no new reading arrives after the grace period', () => {
+      const check = createAlerter();
+      check(reading(-17)); // arms the re-evaluation timer
+      vi.advanceTimersByTime(GRACE_MS + 1);
+      // no new reading — the timer re-evaluated the last one
+      expect(sendMock).toHaveBeenCalledTimes(1);
+      expect(sendMock).toHaveBeenCalledWith(
+        expect.objectContaining({ priority: 1 }),
+      );
+    });
+
+    it('does not fire the timer warning after recovering within grace', () => {
+      const check = createAlerter();
+      check(reading(-17)); // arms the timer
+      vi.advanceTimersByTime(5 * 60_000);
+      check(reading(-18)); // recovered — must clear the pending timer
+      vi.advanceTimersByTime(GRACE_MS * 2);
+      expect(sendMock).not.toHaveBeenCalled();
+    });
+
+    it('reports the latest reading when the timer fires', () => {
       const check = createAlerter();
       check(reading(-17));
-      vi.advanceTimersByTime(GRACE_MS + 1);
-      // no new reading — a timer-based re-evaluation should have warned
+      vi.advanceTimersByTime(60_000);
+      check(reading(-16)); // still within grace, timer already armed
+      vi.advanceTimersByTime(GRACE_MS);
       expect(sendMock).toHaveBeenCalledTimes(1);
+      expect(sendMock).toHaveBeenCalledWith(
+        expect.objectContaining({ message: expect.stringContaining('-16') }),
+      );
     });
   });
 

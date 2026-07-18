@@ -9,20 +9,26 @@ export function createFreezerAlerter({
   warningGraceMs = 10 * 60_000,
 }: { setPoint?: number; criticalAt?: number; warningGraceMs?: number } = {}) {
   const zones = new Map<string, { level: Level; warmSince: number | null }>();
+  const timers = new Map<string, ReturnType<typeof setTimeout>>();
+  const lastReadings = new Map<string, TemperatureReading>();
 
-  return (r: TemperatureReading): void => {
+  return function check(r: TemperatureReading): void {
     const key = `${r.deviceId}:${r.zoneId}`;
+    lastReadings.set(key, r);
     const state = zones.get(key) ?? { level: 'ok' as Level, warmSince: null };
     zones.set(key, state);
 
     const isWarm = r.current > setPoint;
-    const isCritial = r.current >= criticalAt;
+    const isCritical = r.current >= criticalAt;
 
-    if (!isWarm) state.warmSince = null;
-    else state.warmSince ??= Date.now();
+    if (!isWarm) {
+      state.warmSince = null;
+      clearTimeout(timers.get(key));
+      timers.delete(key);
+    } else state.warmSince ??= Date.now();
 
     let next: Level;
-    if (isCritial) next = 'critical';
+    if (isCritical) next = 'critical';
     else if (!isWarm) next = 'ok';
     else if (state.level !== 'ok') next = 'warning';
     else
@@ -30,6 +36,22 @@ export function createFreezerAlerter({
         Date.now() - (state.warmSince ?? Date.now()) >= warningGraceMs
           ? 'warning'
           : 'ok';
+
+    // Re-evaluate on a timer: a temperature that rises and then holds steady
+    // produces no further SSE events, so without this the grace period would
+    // elapse with nothing re-checking and the warning would never fire.
+    if (next === 'ok' && isWarm && !timers.has(key)) {
+      const remaining =
+        warningGraceMs - (Date.now() - (state.warmSince ?? Date.now())) + 1;
+      const timer = setTimeout(() => {
+        timers.delete(key);
+        const last = lastReadings.get(key);
+        if (last) check(last);
+      }, remaining);
+      timer.unref?.();
+      timers.set(key, timer);
+    }
+
     if (next === state.level) return;
     const prev = state.level;
     state.level = next;
