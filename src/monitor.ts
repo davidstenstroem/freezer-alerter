@@ -73,6 +73,8 @@ export function parseTemperatureReadings(
     return [];
   }
 
+  if (!Array.isArray(controls)) return [];
+
   return controls
     .filter(
       (c): c is RawControl & { value: number } =>
