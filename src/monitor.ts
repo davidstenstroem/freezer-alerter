@@ -9,6 +9,16 @@ import type {
 
 const apiBaseUrl = 'https://home-api.smartdevice.liebherr.com/v1'
 
+export async function getDevices(apiKey: string): Promise<LiebherrDevice[]> {
+  const res = await fetch(`${apiBaseUrl}/devices`, {
+    headers: { 'api-key': apiKey },
+  });
+  if (res.status === 401) throw new Error('Invalid API Key');
+  if (res.status === 429) throw new Error('API rate limit exceeded');
+  if (!res.ok) throw new Error(`GET /devices failed: ${res.status}`);
+  return (await res.json()) as LiebherrDevice[];
+}
+
 export async function* sseEvents(
   apiKey: string,
   deviceId: string,
@@ -146,14 +156,4 @@ export function createTemperatureMonitor(
       aborts.clear();
     },
   };
-}
-
-export async function getDevices(apiKey: string): Promise<LiebherrDevice[]> {
-  const res = await fetch(`${apiBaseUrl}/devices`, {
-    headers: { 'api-key': apiKey },
-  });
-  if (res.status === 401) throw new Error('Invalid API Key');
-  if (res.status === 429) throw new Error('API rate limit exceeded');
-  if (!res.ok) throw new Error(`GET /devices failed: ${res.status}`);
-  return (await res.json()) as LiebherrDevice[];
 }
