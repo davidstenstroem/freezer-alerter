@@ -1,4 +1,4 @@
-import { env } from './env';
+import { apiBaseUrl } from './env';
 import type {
   LiebherrDevice,
   MonitorHandlers,
@@ -9,14 +9,15 @@ import type {
 } from './types';
 
 export async function* sseEvents(
+  apiKey: string,
   deviceId: string,
   signal: AbortSignal,
 ): AsyncGenerator<string> {
   const res = await fetch(
-    `${env.API_BASE_URL}/sse/devices/${deviceId}/controls`,
+    `${apiBaseUrl}/sse/devices/${deviceId}/controls`,
     {
       headers: {
-        'api-key': env.API_KEY,
+        'api-key': apiKey,
         accept: 'text/event-stream',
       },
       signal,
@@ -79,6 +80,7 @@ export function parseTemperatureReadings(
 }
 
 export function createTemperatureMonitor(
+  apiKey: string,
   handlers: MonitorHandlers,
   { reconnectBaseMs = 5_000, reconnectMaxMs = 5 * 60_000 }: MonitorOptions = {},
 ): TempMonitor {
@@ -105,7 +107,7 @@ export function createTemperatureMonitor(
     aborts.set(device.deviceId, ac);
 
     let connected = false;
-    for await (const data of sseEvents(device.deviceId, ac.signal)) {
+    for await (const data of sseEvents(apiKey, device.deviceId, ac.signal)) {
       if (!connected) {
         connected = true;
         handlers.onConnected?.(device.deviceId);
@@ -132,7 +134,7 @@ export function createTemperatureMonitor(
   return {
     start: async () => {
       stopped = false;
-      const devices = await getDevices();
+      const devices = await getDevices(apiKey);
       for (const device of devices) {
         void streamWithReconnect(device);
       }
@@ -145,9 +147,9 @@ export function createTemperatureMonitor(
   };
 }
 
-export async function getDevices(): Promise<LiebherrDevice[]> {
-  const res = await fetch(`${env.API_BASE_URL}/devices`, {
-    headers: { 'api-key': env.API_KEY },
+export async function getDevices(apiKey: string): Promise<LiebherrDevice[]> {
+  const res = await fetch(`${apiBaseUrl}/devices`, {
+    headers: { 'api-key': apiKey },
   });
   if (res.status === 401) throw new Error('Invalid API Key');
   if (res.status === 429) throw new Error('API rate limit exceeded');
