@@ -1,3 +1,4 @@
+import { env } from './env';
 import { createFreezerAlerter } from './freezer-alert';
 import {
   markConnected,
@@ -15,7 +16,7 @@ const checkFreezer = createFreezerAlerter({
 
 startHealtServer();
 
-createTemperatureMonitor({
+createTemperatureMonitor(env.API_KEY, {
   onConnected: (id) => {
     console.log(`[sse] connected: ${id}`);
     markConnected();
