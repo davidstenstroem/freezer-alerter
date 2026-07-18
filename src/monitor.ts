@@ -1,4 +1,3 @@
-import { apiBaseUrl } from './env';
 import type {
   LiebherrDevice,
   MonitorHandlers,
@@ -7,6 +6,8 @@ import type {
   TemperatureReading,
   TempMonitor,
 } from './types';
+
+const apiBaseUrl = 'https://home-api.smartdevice.liebherr.com/v1'
 
 export async function* sseEvents(
   apiKey: string,
