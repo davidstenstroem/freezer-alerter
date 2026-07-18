@@ -4,7 +4,7 @@ import {
   markConnected,
   markDisconnected,
   markEvent,
-  startHealtServer,
+  startHealthServer,
 } from './health';
 import { createTemperatureMonitor } from './monitor';
 
@@ -14,7 +14,7 @@ const checkFreezer = createFreezerAlerter({
   warningGraceMs: 10 * 60_000,
 });
 
-startHealtServer();
+startHealthServer();
 
 createTemperatureMonitor(env.API_KEY, {
   onConnected: (id) => {

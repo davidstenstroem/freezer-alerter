@@ -14,7 +14,7 @@ export const markEvent = (): void => {
   state.lastEventAt = new Date().toISOString();
 };
 
-export function startHealtServer(port = 8056): void {
+export function startHealthServer(port = 8056): void {
   createServer((_req, res) => {
     res.writeHead(state.connected ? 200 : 503, {
       'content-type': 'application/json',
