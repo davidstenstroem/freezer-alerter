@@ -210,10 +210,7 @@ describe('parseTemperatureReadings', () => {
     expect(parseTemperatureReadings(device, 'not json')).toEqual([]);
   });
 
-  // Documents a gap: a JSON *object* payload parses fine but is not an
-  // array, so .filter throws instead of returning []. Add an
-  // Array.isArray(controls) check to enable this test.
-  it.skip('returns an empty list for a non-array JSON payload', () => {
+  it('returns an empty list for a non-array JSON payload', () => {
     expect(parseTemperatureReadings(device, '{"status":"ok"}')).toEqual([]);
   });
 });
