@@ -1,4 +1,3 @@
-import { env } from './env';
 import { createFreezerAlerter } from './freezer-alert';
 import {
   markConnected,
@@ -31,9 +30,7 @@ createTemperatureMonitor({
       `${r.deviceName} zone ${r.zoneId} (${r.zonePosition ?? '?'}): ${r.current}${r.unit} (target ${r.target}${r.unit})`,
     );
     markEvent();
-    if (r.deviceId === env.DEVICE_ID) {
-      checkFreezer(r);
-    }
+    checkFreezer(r);
   },
   onChange: (r, prev) =>
     console.log(
