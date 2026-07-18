@@ -43,7 +43,11 @@ const collectSse = async (
 ): Promise<string[]> => {
   fetchMock.mockResolvedValue(new Response(streamOf(...chunks)));
   const events: string[] = [];
-  for await (const e of sseEvents('key', 'dev-1', new AbortController().signal)) {
+  for await (const e of sseEvents(
+    'key',
+    'dev-1',
+    new AbortController().signal,
+  )) {
     events.push(e);
   }
   return events;
@@ -126,16 +130,9 @@ describe('sseEvents', () => {
 
   it('throws on a non-ok response', async () => {
     fetchMock.mockResolvedValue(new Response('nope', { status: 401 }));
-    const iterate = async () => {
-      for await (const _ of sseEvents(
-        'key',
-        'dev-1',
-        new AbortController().signal,
-      )) {
-        // no-op
-      }
-    };
-    await expect(iterate()).rejects.toThrow('SSE connect failed: 401');
+    await expect(
+      sseEvents('key', 'dev-1', new AbortController().signal).next(),
+    ).rejects.toThrow('SSE connect failed: 401');
   });
 });
 
@@ -197,7 +194,10 @@ describe('parseTemperatureReadings', () => {
   });
 
   it('falls back to the model name when nickname is missing', () => {
-    const unnamed = { ...device, nickname: undefined } as unknown as LiebherrDevice;
+    const unnamed = {
+      ...device,
+      nickname: undefined,
+    } as unknown as LiebherrDevice;
     const json = JSON.stringify([
       { type: 'TemperatureControl', name: 'temperature', value: -18 },
     ]);

@@ -7,7 +7,7 @@ import type {
   TempMonitor,
 } from './types';
 
-const apiBaseUrl = 'https://home-api.smartdevice.liebherr.com/v1'
+const apiBaseUrl = 'https://home-api.smartdevice.liebherr.com/v1';
 
 export async function getDevices(apiKey: string): Promise<LiebherrDevice[]> {
   const res = await fetch(`${apiBaseUrl}/devices`, {
@@ -24,16 +24,13 @@ export async function* sseEvents(
   deviceId: string,
   signal: AbortSignal,
 ): AsyncGenerator<string> {
-  const res = await fetch(
-    `${apiBaseUrl}/sse/devices/${deviceId}/controls`,
-    {
-      headers: {
-        'api-key': apiKey,
-        accept: 'text/event-stream',
-      },
-      signal,
+  const res = await fetch(`${apiBaseUrl}/sse/devices/${deviceId}/controls`, {
+    headers: {
+      'api-key': apiKey,
+      accept: 'text/event-stream',
     },
-  );
+    signal,
+  });
 
   if (!res.ok || !res.body)
     throw new Error(`SSE connect failed: ${res.status}`);
