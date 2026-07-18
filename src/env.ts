@@ -7,5 +7,3 @@ const envSchema = z.object({
 });
 
 export const env = envSchema.parse(process.env);
-
-export const apiBaseUrl = 'https://home-api.smartdevice.liebherr.com/v1'
