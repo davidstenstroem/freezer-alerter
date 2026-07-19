@@ -46,6 +46,10 @@ jobs:
         id: release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/setup-qemu-action@v4
+        if: steps.release.outputs.new_release_published == 'true'
+      - uses: docker/setup-buildx-action@v4
+        if: steps.release.outputs.new_release_published == 'true'
       - uses: docker/login-action@v4
         if: steps.release.outputs.new_release_published == 'true'
         with:
@@ -66,5 +70,6 @@ jobs:
         with:
           context: .
           push: true
+          platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
