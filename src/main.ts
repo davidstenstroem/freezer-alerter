@@ -7,6 +7,7 @@ import {
   startHealthServer,
 } from './health';
 import { createTemperatureMonitor } from './monitor';
+import { sendPushover } from './pushover';
 
 const checkFreezer = createFreezerAlerter({
   setPoint: -18,
@@ -39,6 +40,13 @@ createTemperatureMonitor(env.API_KEY, {
     ),
 })
   .start()
+  .then(() => {
+    sendPushover({
+      title: '🟢 Freezer alerter started',
+      message: 'Connected to the Liebherr API, monitoring is running.',
+      priority: -1,
+    })
+  })
   .catch((err) => {
     console.error(err);
     process.exit(1);
