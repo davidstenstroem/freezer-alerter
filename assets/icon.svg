@@ -1,0 +1,66 @@
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="24"
+  height="24"
+  viewBox="0 0 24 24"
+  fill="none"
+  class="lucide lucide-thermometer-snowflake-icon lucide-thermometer-snowflake"
+>
+  <circle cx="12" cy="12" r="11.5" fill="white" />
+  <path
+    d="m9.3 18.8-1.063-2.125L5.9 17.1"
+    stroke="black"
+    stroke-width="1.7"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M9.3 5.2 8.238 7.325 5.9 6.9"
+    stroke="black"
+    stroke-width="1.7"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M9.797 14.55H9.3"
+    stroke="black"
+    stroke-width="1.7"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M2.5 12h5.525L9.3 9.45"
+    stroke="black"
+    stroke-width="1.7"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <path
+    d="M17.8 14.159a3.4 3.4 0 1 1-3.4 0V5.2a1.7 1.7 0 0 1 3.4 0z"
+    stroke="black"
+    stroke-width="1.7"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <path
+    d="m4.2 10.3 1.275 1.7L4.2 13.7"
+    stroke="black"
+    stroke-width="1.7"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <path
+    d="m6.75 19.65 2.55-5.1-1.275-2.55"
+    stroke="black"
+    stroke-width="1.7"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <path
+    d="m6.75 4.35 2.55 5.1h1.7"
+    stroke="black"
+    stroke-width="1.7"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+</svg>
